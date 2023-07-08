@@ -1,0 +1,86 @@
+{% extends 'basic.html' %}
+
+{% block head %}
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .table th {
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+  }
+
+</style>
+{% endblock %}
+
+{% block body %}
+{% load cart %}
+{% load custom_filter %}
+
+<div class="container fade-in">
+  <div class="card">
+    <h2 class="text-center">My Orders</h2>
+    <hr>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>SNo.</th>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Order Date</th>
+          <th>Order Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>
+            <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" style="height: 80px; width: 80px;">
+            <span>{{ order.product.name }}</span>
+          </td>
+          <td>Rs.{{ order.price }}</td>
+          <td>{{ order.quantity }}</td>
+          <td>Rs.{{ order.quantity|multiply:order.price }}</td>
+          <td>{{ order.date }}</td>
+          <td>
+            {% if order.status == 'Order Placed' %}
+            <span class="badge badge-secondary">{{ order.status }}</span>
+            {% elif order.status == 'Shipped' %}
+            <span class="badge badge-primary">{{ order.status }}</span>
+            {% elif order.status == 'Out For Delivery' %}
+            <span class="badge badge-info">{{ order.status }}</span>
+            {% elif order.status == 'Delivered' %}
+            <span class="badge badge-success">{{ order.status }}</span>
+            {% elif order.status == 'Failed' %}
+            <span class="badge badge-danger">{{ order.status }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+{% endblock %}

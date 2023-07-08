@@ -1,0 +1,226 @@
+{% extends 'basic.html' %}
+
+{% block title%} Adornique{% endblock %}
+{% block css %}
+<style>
+    body .no-padding {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .card-body {
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .card-text {
+        color: #666666;
+        margin-bottom: 10px;
+    }
+
+    .tagline {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .tagline-text {
+        font-size: 36px;
+        font-weight: bold;
+        color: black; /* Gold */
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-shadow: 1px 1px 1px #FFD700;
+    }
+
+    hr {
+        border-color: black;
+    }
+
+    .list-group-item.active {
+        background-color: black;
+        color: gold;
+    }
+
+    .list-group-item:hover {
+        background-color: black;
+        color: gold;
+    }
+
+    .image-size {
+        width: auto;
+        height: 300px;
+        object-fit: cover;
+    }
+
+    .cart-button:hover {
+        background-color: #FFD700;
+        color: black;
+    }
+    .card-footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background:white;
+    }
+    .cart-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 150px;
+        height: 40px;
+        background-color: black;
+        color: #FFD700;
+        border: none;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.3s, color 0.3s;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 0 auto;
+    }
+
+    .quantity-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 5px 0;
+    }
+
+    .quantity-btn input {
+        width: 30px;
+        text-align: center;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .quantity-value {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .quantity-btn .btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border: none;
+        background-color: #FFD700;
+        color: black;
+        border-radius: 3px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 0 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .quantity-btn .btn:hover {
+    background-color:black;
+    color:#FFD700;
+    }
+
+
+</style>
+{% endblock %}
+
+{% block body %}
+{% load cart %}
+<div class="container-fluid mt-3">
+    <div class="tagline">
+        <h1 class="tagline-text">Adornique: Where Elegance Finds Expression</h1>
+    </div>
+    <hr>
+    <br>
+
+    <div class="row">
+        <!-- Filter -->
+        <div class="col-lg-2 mx-auto">
+            <div class="list-group gold-black-theme">
+                <a href="/" class="list-group-item" aria-current="true">All Products</a>
+                {% for category in categories %}
+                    <a href="/?category={{category.id}}" class="list-group-item"
+                        aria-current="true">{{category.name}}</a>
+                {% endfor %}
+            </div>
+            <br><br>
+            <div class="dropdown list-group" style="background-color: white; border: 2px black solid;">
+    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: white; color: black;">
+        Sort By:
+    </button>
+    <div class="dropdown-menu dropdown-menu-center profile-dropdown" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="?category={{ request.session.cat }}&ATOZ=True">Name: A to Z</a>
+        <a class="dropdown-item" href="?category={{ request.session.cat }}&ZTOA=True">Name: Z to A</a>
+        <a class="dropdown-item" href="?category={{ request.session.cat }}&PriceLH=True">Price: Low to High</a>
+        <a class="dropdown-item" href="?category={{ request.session.cat }}&PriceHL=True">Price: High to Low</a>
+    </div>
+</div>
+
+        </div>
+
+        <!-- Products -->
+        <div id="products" class="col-lg-10 mx-auto">
+            <div class="row mx-auto mb-3">
+                {% for product in products %}
+                    <div class="card mx-auto mb-3" id="{{product.id}}" style="width: 18rem;">
+                        <img src="{{ product.image.url }}" class="card-img-top image-size" alt="...">
+                        <div class="card-body d-flex flex-column align-items-center" >
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text mb-auto"><b>Rs. {{ product.price }}</b></p>
+                             <p class="card-text">{{ product.description }}</p>
+                        </div>
+                        <div class="card-footer p-0">
+                            {% if not product|is_in_cart:request.session.cart %}
+                                <form action="/#{{product.id}}" method="post" class="btn-block">
+                                    {% csrf_token %}
+                                    <input type="text" hidden name="product" value="{{product.id}}">
+                                    <input type="submit" class="cart-button" value="Add To Cart">
+                                </form>
+                            {% else %}
+                                <div class="row no-gutters">
+                                    <form action="/#{{product.id}}" method="post" class="col-4 quantity-btn">
+                                        {% csrf_token %}
+                                        <input type="text" hidden name="product" value="{{product.id}}">
+                                        <input type="text" hidden name="remove" value="True">
+                                        <input type="submit" value="-" class="btn btn-light">
+                                    </form>
+                                    <div class="quantity-value col">
+                                        {{ product|cart_quantity:request.session.cart }}
+                                    </div>
+
+                                    <form action="/#{{product.id}}" method="post" class="col-4 quantity-btn">
+                                        {% csrf_token %}
+                                        <input type="text" hidden name="product" value="{{product.id}}">
+                                        <input type="submit" value="+" class="btn btn-light">
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--  <div class="modal-dialog">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h1 class="modal-title fs-5" id="exampleModalLabel"></h1>-->
+<!--        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>-->
+<!--      </div>-->
+<!--      <div class="modal-body">-->
+<!--        <p>Product Name: <span id="productName"></span></p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+{% endblock %}
+

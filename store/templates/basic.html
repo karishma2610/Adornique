@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>{% block title%} {% endblock %}</title>
+    <style>
+      /* Navbar Styles */
+      .navbar {
+        background-color: #000000; /* Black */
+        height: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-size: 24px;
+        font-weight: bold;
+        color: #FFD700; /* Gold */
+        text-decoration: none;
+      }
+
+      .navbar-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+      }
+
+      .navbar-links li {
+        margin-left: 20px;
+      }
+
+      .navbar-links a {
+        color: #FFFFFF; /* White */
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .navbar-links a:hover {
+        color: #FFD700; /* Gold on hover */
+      }
+
+      /* Profile Dropdown Styles */
+      .profile-dropdown {
+        position: relative;
+      }
+
+      .profile-dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .profile-dropdown:hover .profile-dropdown-content {
+        display: block;
+      }
+
+      .profile-dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+      .profile-dropdown-content a:hover {
+        background-color: black;
+      }
+
+      /* Body Styles */
+      body {
+        background-color: #F4F4F4; /* Light Gray */
+        color: #333333; /* Dark Gray */
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        font-family: "Roboto", sans-serif;
+        font-weight: bold;
+      }
+
+      a {
+        color: #333333; /* Dark Gray */
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      a:hover {
+        color: #FFD700; /* Gold on hover */
+      }
+
+      {% block css %} {% endblock %}
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <a class="navbar-brand" href="#">Adornique</a>
+      <ul class="navbar-links">
+        <li><a href="/cart">Cart
+          <span class="badge badge-warning">{{request.session.cart.keys|length}}</span>
+        </a></li>
+        <li><a href="/">Home</a></li>
+        {% if request.session.name %}
+          <li><a href="/order">My Orders</a></li>
+            <li class="profile-dropdown">
+                <a href="#">Hi, {{ request.session.name }}▼</a>
+                <div class="profile-dropdown-content">
+                    <a href="/logout">Logout</a>
+                </div>
+            </li>
+        {% endif %}
+        {% if not request.session.name %}
+          <li><a href="/login">Login</a></li>
+          <li><a href="/signup">Signup</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% block body %} {% endblock %}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    {% block js %}
+    {% endblock %}
+  </body>
+</html>
